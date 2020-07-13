@@ -5,7 +5,7 @@ const pool = require('../modules/pool');
 router.get('/', (req, res) => {
   console.log('In /treats GET');
 
-  let queryText = `SELECT * FROM "treats";`;
+  let queryText = `SELECT * FROM "treats" ORDER BY "id" ;`;
   pool
     .query(queryText)
     .then((result) => {
@@ -39,10 +39,14 @@ router.post('/', (req, res) => {
 // PUT /treats/<id>
 router.put('/:id', (req, res) => {
   const treatId = req.params.id;
-  const queryText = `UPDATE "treats" SET "description" = $1 WHERE "id" = $2;`;
-
+  const queryText = `UPDATE "treats" SET "description" = $1, "name" = $2, "pic" = $3 WHERE "id" = $4;`;
   pool
-    .query(queryText, [req.body.description, treatId])
+    .query(queryText, [
+      req.body.description,
+      req.body.name,
+      req.body.pic,
+      treatId,
+    ])
     .then((dbResponse) => {
       res.sendStatus(200);
     })
@@ -63,7 +67,7 @@ router.delete('/:id', (req, res) => {
       res.sendStatus(200);
     })
     .catch((error) => {
-      console.log('PUT Error:', error);
+      console.log('DELETE Error:', error);
       res.sendStatus(500);
     });
 });
